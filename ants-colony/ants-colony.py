@@ -3,6 +3,7 @@ Problem: https://www.urionlinejudge.com.br/judge/en/problems/view/1135
 Dijkstra Algorithm: https://www.bogotobogo.com/python/python_Dijkstras_Shortest_Path_Algorithm.php
 """
 import sys
+import heapq
 
 class Vertex:
     def __init__(self, node):
@@ -78,12 +79,41 @@ class Graph:
     def get_previous(self):
         return self.previous
 
-    def shortest(self, path):
-        '''make shortest path from v.previous'''
-        if v.previous:
-            path.append(v.previous.get_id())
-            shortest(v.previous, path)
-        return
+def shortest(self, path):
+    '''make shortest path from v.previous'''
+    if v.previous:
+        path.append(v.previous.get_id())
+        shortest(v.previous, path)
+    return
+
+def dijkstra(aGraph, start, target):
+    start.set_distance(0)
+
+    #unvisited_queue = [(v.get_distance(), v) for v in aGraph]
+    unvisited_queue = [v.get_distance() for v in aGraph]
+    heapq.heapify(unvisited_queue)
+
+    while len(unvisited_queue):
+        uv = heapq.heappop(unvisited_queue)
+        current = uv[1]
+        current.set_visited()
+
+        for next_node in current.adjacent:
+            if next_node.visited:
+                continue
+            new_dist = current.get_distance() + current.get_weight(next_node)
+            
+            if new_dist < next_node.get_distance():
+                next_node.set_distance(new_dist)
+                next_node.set_previous(current)
+                print(f'updated: current = {current.get_id()} next = {next_node.get_id()} new_dist = {next_node.get_distance()}')
+            else:
+                print(f'not updated: current = {current.get_id()} next = {next_node.get_id()} new_dist = {next_node.get_distance()}')
+
+        while len(unvisited_queue):
+            heapq.heappop(unvisited_queue)
+        unvisited_queue = [(v.get_distance(), v) for v in aGraph if not v.visited]
+        heapq.heapify(unvisited_queue)
 
 
 def create_graph(anthills):
@@ -111,6 +141,7 @@ def create_connections(graph, anthills):
 loop_condition = True
 
 while loop_condition == True:
+    print('====================================================')
     anthills = int(input())    
     if anthills == 0:
         break 
@@ -125,6 +156,15 @@ while loop_condition == True:
             vid = v.get_id()
             wid = w.get_id()
             print(f'{vid}, {wid}, {v.get_weight(w)}')
+    
+    queue_count = int(input())
+    for q in range(queue_count):
+        from_node, to_node = input().split()
+        from_node = graph.get_vertex(int(from_node))
+        to_node = graph.get_vertex(int(to_node))
+        dijkstra(graph, from_node, to_node)
 
-
-
+        target = g.get_vertex(to_node)
+        path = [target.get_id()]
+        shortest(target, path)
+        print(f'shortest path: path')
