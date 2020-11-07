@@ -19,7 +19,7 @@ class Vertex:
         return self.adjacent.keys()
 
     def get_id(self):
-        return seft.id
+        return self.id
 
     def get_weight(self, neighbor):
         return self.adjacent[neighbor]
@@ -66,7 +66,7 @@ class Graph:
         if to_node not in self.vert_dict:
             self.add_vertex(to_node)
 
-        self.vert_dict[from_node].add_neighbor(self.vert_dict[to], cost)
+        self.vert_dict[from_node].add_neighbor(self.vert_dict[to_node], cost)
         self.vert_dict[to_node].add_neighbor(self.vert_dict[from_node], cost)
     
     def get_vertices(self):
@@ -96,18 +96,35 @@ def create_vertices(graph, anthills):
         graph.add_vertex(a)
     return graph
 
+def create_connections(graph, anthills):
+    for from_node in range(1, anthills):
+        to_node, distance = input().split()
+        to_node = int(to_node)
+        distance = int(distance)
+
+        graph.add_edge(from_node, to_node, distance)
+    return graph
+
+
+
+
 loop_condition = True
 
 while loop_condition == True:
-    data = input().split()
-    if len(data) == 1:
-        anthills_count = int(data[0])    
-    if anthills_count == 0:
+    anthills = int(input())    
+    if anthills == 0:
         break 
 
-    graph = create_graph(anthills_count)
-    print(graph.get_vertices())
+    graph = create_graph(anthills)
+    graph = create_connections(graph, anthills)
+
+    #print(graph.get_vertices())
+
+    for v in graph:
+        for w in v.get_connections():
+            vid = v.get_id()
+            wid = w.get_id()
+            print(f'{vid}, {wid}, {v.get_weight(w)}')
 
 
 
-    print(data)
